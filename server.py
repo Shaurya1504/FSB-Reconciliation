@@ -66,6 +66,16 @@ AUTH_DB = os.environ.get("AUTH_DB_PATH", os.path.join(BASE_DIR, "auth_db.xlsx"))
 PROTECTED = {"/", "/process"}
 
 
+# ── Error handlers (return JSON, never HTML) ──────────────────────────────
+@app.errorhandler(413)
+def too_large(e):
+    return jsonify({"error": "Files too large. Maximum upload size is 200 MB."}), 413
+
+@app.errorhandler(500)
+def server_error(e):
+    return jsonify({"error": "Internal server error. Check logs."}), 500
+
+
 # ── Auth guard ─────────────────────────────────────────────────────────────
 @app.before_request
 def require_login():
