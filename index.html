@@ -903,8 +903,16 @@
       }
 
       if (!resp.ok) {
-        const err = await resp.json();
-        throw new Error(err.error || resp.statusText);
+        // Render/proxy may return HTML error pages (413, 502, 504) — never assume JSON
+        const ct = resp.headers.get('content-type') || '';
+        if (ct.includes('application/json')) {
+          const err = await resp.json();
+          throw new Error(err.error || resp.statusText);
+        }
+        if (resp.status === 413) throw new Error('Files too large for server. Try smaller files.');
+        if (resp.status === 502) throw new Error('Server gateway error (502). Try again in a moment.');
+        if (resp.status === 504) throw new Error('Request timed out (504). Files may be too large or server is busy.');
+        throw new Error(`Server error ${resp.status}: ${resp.statusText}`);
       }
 
       const blob = await resp.blob();
