@@ -35,7 +35,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # ── App init ───────────────────────────────────────────────────────────────
-app = Flask(__name__, static_folder=".")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+app = Flask(__name__, static_folder=BASE_DIR)
 
 # Secret key: MUST be set via environment variable in production (Render).
 # Falling back to a random token means sessions are lost on every restart —
@@ -60,7 +61,7 @@ app.config.update(
 )
 
 # Auth DB location: can be overridden via env var for flexible deployments
-AUTH_DB = os.environ.get("AUTH_DB_PATH", "auth_db.xlsx")
+AUTH_DB = os.environ.get("AUTH_DB_PATH", os.path.join(BASE_DIR, "auth_db.xlsx"))
 
 PROTECTED = {"/", "/process"}
 
@@ -83,12 +84,12 @@ def health():
 # ── Static routes ──────────────────────────────────────────────────────────
 @app.route("/login")
 def login_page():
-    return send_file(os.path.join(os.path.dirname(os.path.abspath(__file__)), "index.html"))
+    return send_file(os.path.join(BASE_DIR, "index.html"))
 
 
 @app.route("/")
 def index():
-    return send_file(os.path.join(os.path.dirname(os.path.abspath(__file__)), "index.html"))
+    return send_file(os.path.join(BASE_DIR, "index.html"))
 
 
 # ── Auth API ───────────────────────────────────────────────────────────────
