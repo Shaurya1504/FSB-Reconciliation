@@ -57,7 +57,7 @@ app.config.update(
     SESSION_COOKIE_SAMESITE="Lax",
     # Set SECURE=True automatically when running behind Render's HTTPS proxy
     SESSION_COOKIE_SECURE=os.environ.get("RENDER", "") != "",
-    MAX_CONTENT_LENGTH=50 * 1024 * 1024,   # 50 MB upload limit
+    MAX_CONTENT_LENGTH=200 * 1024 * 1024,   # 200 MB upload limit
 )
 
 # Auth DB location: can be overridden via env var for flexible deployments
